@@ -5,39 +5,51 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainViewModel:ViewModel() {
+class MainViewModel : ViewModel() {
 
     var resultState by mutableStateOf("")
         private set
 
-    var countTime by mutableStateOf(0)
+    var countTime1 by mutableStateOf(0)
         private set
-    private var oneCount by mutableStateOf(false)
 
-    fun fetchData(){
-      val job =    viewModelScope.launch {
-            for (i in 1..5){
+    var countTime2 by mutableStateOf(0)
+        private set
+
+    private var job1: Job? = null
+    private var job2: Job? = null
+
+    fun startCounters() {
+        // Inicia el primer contador y al terminar, el segundo contador
+        job1 = viewModelScope.launch {
+            for (i in 1..5) {
                 delay(1000)
-                countTime = i
+                countTime1 = i
             }
-          oneCount = true
+            startSecondCounter() // Inicia el segundo contador cuando el primero termine
         }
-
-        viewModelScope.launch {
-            delay(5000)
-            resultState = "Respuesta desde el servidor Web"
-        }
-
-        if( oneCount){
-            job.cancel()
-        }
-
     }
 
+    private suspend fun startSecondCounter() {
+        job2 = viewModelScope.launch {
+            for (i in 1..5) {
+                delay(1000)
+                countTime2 = i
+            }
+            resultState = "Tarea completada!"
+        }
+    }
 
+    fun cancelCounters() {
+        job1?.cancel()
+        job2?.cancel()
+        resultState = "Procesos cancelados"
+    }
+}
 
 
 
@@ -67,4 +79,3 @@ class MainViewModel:ViewModel() {
 
 
 
-}

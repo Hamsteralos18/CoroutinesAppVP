@@ -21,7 +21,7 @@ import com.example.coroutinesapp.viewmodel.MainViewModel
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel:MainViewModel by viewModels()
+        val viewModel: MainViewModel by viewModels()
 
         enableEdgeToEdge()
         setContent {
